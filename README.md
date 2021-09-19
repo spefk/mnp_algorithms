@@ -1,2 +1,2 @@
-# mnp_algorithms
+# MNP Algorithms
 Algorithms for solving Multiway number partitioning problem.
