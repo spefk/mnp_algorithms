@@ -5,9 +5,13 @@ from typing import Callable, Iterable, Collection, Iterator
 from abc import abstractmethod, ABC
 
 
+"""Classes to have unified interface of data access."""
+
+
 class DataSource(ABC):
     """Base class for all data sources.
-    Any derived class must implement 'get_data_iter' method.
+    Any derived class must implement 'get_data_iter' method, that
+        returns <Iterator> of data rows.
     """
 
     def __init__(
@@ -16,8 +20,9 @@ class DataSource(ABC):
         item_type: type = int
      ):
         """
-        param item_type: type to cast items in Collection;
-        param to_collection: Callable[[Iterable], Collection], function that gather elements to collection;
+        param item_type: type to cast items before gathering them to Collection;
+        param to_collection: Callable[[Iterable], Collection], function that gather
+            elements to collection;
         """
         self.to_collection = to_collection
         self.item_type = item_type
@@ -27,7 +32,7 @@ class DataSource(ABC):
 
     @abstractmethod
     def get_data_iter(self) -> Iterator:
-        raise NotImplementedError()
+        return NotImplemented
 
 
 class ExternalSource(DataSource):

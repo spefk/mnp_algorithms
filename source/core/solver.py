@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
-from data_source import DataSource
-from algorithm import Algorithm
+from .data_source import DataSource
+from .algorithm import Algorithm
 
 
 class Solver(ABC):
@@ -25,13 +25,3 @@ class Solver(ABC):
     @abstractmethod
     def solve_problem(self):
         raise NotImplementedError()
-
-
-class MNP(Solver):
-    """General class for solving MNP."""
-    def __init__(self, **kwargs):
-        super(MNP, self).__init__(**kwargs)
-
-    def solve_problem(self):
-        _of, _sets = self.algorithm.run(self.source.get_data())
-        return _of, _sets
