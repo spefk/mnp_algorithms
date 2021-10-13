@@ -1,42 +1,29 @@
 import pytest
-import numpy as np
 import logging
 
-from source.core import WMFileSource, ExternalSource
-from source.mnp import MNP, GreedyAlgorithm
+from core import PythonSource, MNPSolver
+from mnp import GreedyAlgorithm
 
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 
-def test_greedy():
-    wms = WMFileSource(
-        filepath='tests/instances/data.txt',
+@pytest.mark.parametrize(
+    'instance,expected',
+    [
+        ([1, 2], [[2], [1]]),
+        ([100, 1, 2, 3], [[100], [3, 2, 1]]),
+        ([8, 7, 6, 5], [[8, 5], [7, 6]]),
+    ]
+)
+def test_greedy_trivial(instance, expected):
+    ext_s_one = PythonSource(
+        data=instance,
         item_type=float,
-        to_collection=(lambda x: np.array(list(x))),
+        to_collection=list,
     )
 
-    ext_s_one = ExternalSource(
-        data=[8, 6, 7, 4, 5],
-        item_type=float,
-        to_collection=(lambda x: np.array(list(x))),
-    )
-
-    ext_s = ExternalSource(
-        data=[1, 3, 4, 5, 17, 21],
-        item_type=float,
-        to_collection=(lambda x: np.array(list(x))),
-    )
-
-    solver = MNP(source=ext_s_one, algorithm=GreedyAlgorithm(number_of_sets=3))
+    solver = MNPSolver(source=ext_s_one, algorithm=GreedyAlgorithm(number_of_sets=2))
     _of, _sets = solver.solve_problem()
-    logger.warning(f'\nOF: {_of},\nSETS: {_sets}')
+    assert _sets == expected
 
-    solver = MNP(source=ext_s, algorithm=GreedyAlgorithm(number_of_sets=3))
-    _of, _sets = solver.solve_problem()
-    logger.warning(f'\nOF: {_of},\nSETS: {_sets}')
-
-    solver = MNP(source=wms, algorithm=GreedyAlgorithm(number_of_sets=20))
-    _of, _sets = solver.solve_problem()
-    logger.warning(f'\nOF: {_of},\nSETS: {_sets}')

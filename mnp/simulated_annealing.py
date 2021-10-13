@@ -1,32 +1,17 @@
-import numpy as np
-import random
-import copy
 import logging
+import copy
+import random
 
-from typing import Sequence, MutableSequence, Collection, Callable
 from functools import partial
+from typing import Callable, Collection
 
-from source.core.algorithm import MNPAlgorithm
+import numpy as np
 
-
-logger = logging.getLogger('__main__')
-
-
-MNPState = Sequence[MutableSequence]
+from core import MNPAlgorithm
+from .utility import MNPState
 
 
-class GreedyAlgorithm(MNPAlgorithm):
-    """Greedy heuristics to solve multiway number partitioning problem.
-    """
-    def execute_algorithm(self, data: Collection):
-        _data_sorted = sorted(data, reverse=True)
-        _sums = [0 for _ in range(self.number_of_sets)]
-        sets = [[] for _ in _sums]
-        for elem in _data_sorted:
-            _min_idx = np.argmin(_sums)
-            _sums[_min_idx] += elem
-            sets[_min_idx].append(elem)
-        return self.calculate_sum_diff_sq(state=sets, perfect=self.get_perfect_mnp(_data_sorted)), sets
+logger = logging.getLogger(__name__)
 
 
 def transition_greedy_one(state: MNPState):

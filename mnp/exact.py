@@ -3,11 +3,11 @@ import gurobipy as grp
 from typing import Collection
 from gurobipy import GRB
 
-from source.core import MNPAlgorithm
+from core import MNPAlgorithm
 
 
 class GurobiAlgorithm(MNPAlgorithm):
-    """Uses Gurobi optimizer to solve problem
+    """Uses Gurobi optimizer to solve MNP problem.
     """
     def execute_algorithm(self, data: Collection):
         model = grp.Model("ip")

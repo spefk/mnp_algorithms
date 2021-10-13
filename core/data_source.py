@@ -2,16 +2,15 @@ import re
 import os.path
 
 from typing import Callable, Iterable, Collection, Iterator
-from abc import abstractmethod, ABC
+from abc import abstractmethod, ABCMeta
 
 
-"""Classes to have unified interface of data access."""
+"""Classes to have unified data access interface."""
 
 
-class DataSource(ABC):
-    """Base class for all data sources.
-    Any derived class must implement 'get_data_iter' method, that
-        returns <Iterator> of data rows.
+class DataSource(metaclass=ABCMeta):
+    """
+    Base abstract class for all data sources.
     """
 
     def __init__(
@@ -22,8 +21,9 @@ class DataSource(ABC):
         """
         param item_type: type to cast items before gathering them to Collection;
         param to_collection: Callable[[Iterable], Collection], function that gather
-            elements to collection;
+        elements to collection;
         """
+
         self.to_collection = to_collection
         self.item_type = item_type
 
@@ -32,17 +32,19 @@ class DataSource(ABC):
 
     @abstractmethod
     def get_data_iter(self) -> Iterator:
-        return NotImplemented
+        return self.get_data().__iter__()
 
 
-class ExternalSource(DataSource):
-    """Class to work with external (in-python-already) data.
+class PythonSource(DataSource):
     """
+    Class to work with python data.
+    """
+
     def __init__(self, data: Iterable = None, **kwargs):
         """param data: some iterable data."""
         if not data:
-            raise ValueError(f'Data must be set for ExternalSource instance.')
-        super(ExternalSource, self).__init__(**kwargs)
+            raise ValueError(f'Data must be set for PythonSource instance.')
+        super(PythonSource, self).__init__(**kwargs)
         self.data = data
 
     def get_data_iter(self) -> Iterator:
@@ -50,19 +52,24 @@ class ExternalSource(DataSource):
 
 
 class FileSource(DataSource):
-    """Class to work with file sources.
+    """
+    Class to work with file sources.
+
     attribute _strip_chars: str, chars that are to be stripped from string;
     attribute _split_chars_re: str, regular expression to define splitting sequences;
     """
+
     _strip_chars = ' \n'
     _split_chars_re = '[, \n]+'
 
     def __init__(self, filepath: str = None, **kwargs):
         """param filepath: str, path to a file."""
+
         if not filepath:
-            raise ValueError(f'Filepath must be set for FileSource instance.')
+            raise ValueError(f'Parameter filepath must be set for FileSource instance.')
         if not os.path.isfile(filepath):
-            raise ValueError(f'There is no such file {filepath}.') 
+            raise ValueError(f'File {filepath} not exist!')
+
         super(FileSource, self).__init__(**kwargs)
         self.filepath = filepath
 
@@ -70,9 +77,10 @@ class FileSource(DataSource):
         return self._parse_from_file()
 
     def _parse_from_file(self):
-        """Parses file in filepath,
-        mapping and self.item_type on them.
         """
+        Parses file <self.filepath>, mapping <self.item_type> parsed elements.
+        """
+
         with open(self.filepath, 'r') as file:
             _out = file.read()
         _out = re.split(self._split_chars_re, _out.strip(self._strip_chars))
@@ -80,6 +88,6 @@ class FileSource(DataSource):
 
 
 class WMFileSource(FileSource):
-    """Class to work with dumped Wolfram Mathematica List."""
+    """Class to work with dumped Wolfram Mathematica Lists."""
     _strip_chars = '{} \n'
     _split_chars_re = '[, \n]+'

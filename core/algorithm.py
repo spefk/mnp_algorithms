@@ -1,11 +1,10 @@
-
 from abc import abstractmethod, ABCMeta
 from typing import Iterable
 
 
 class Algorithm(metaclass=ABCMeta):
-    """Base class for algorithms.
-    """
+    """Base class for algorithms."""
+
     def run(self, data: Iterable):
         _of, _solution = self.execute_algorithm(data)
         return _of, _solution
