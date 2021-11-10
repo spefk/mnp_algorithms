@@ -8,6 +8,7 @@ numpy = "*"
 gurobipy = "*"
 mypy = "*"
 pytest = "*"
+more-itertools = "*"
 
 [dev-packages]
 

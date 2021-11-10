@@ -24,6 +24,6 @@ def test_greedy_trivial(instance, expected):
     )
 
     solver = MNPSolver(source=ext_s_one, algorithm=GreedyAlgorithm(number_of_sets=2))
-    _of, _sets = solver.solve_problem()
+    _sets = solver.solve_problem()
     assert _sets == expected
 

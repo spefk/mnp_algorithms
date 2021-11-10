@@ -3,13 +3,12 @@ import gurobipy as grp
 from typing import Collection
 from gurobipy import GRB
 
-from core import MNPAlgorithm
+from core import MNPAlgorithm, MNP_Number, MNP_Answer
 
 
 class GurobiAlgorithm(MNPAlgorithm):
-    """Uses Gurobi optimizer to solve MNP problem.
-    """
-    def execute_algorithm(self, data: Collection):
+    """ Uses Gurobi optimizer to solve MNP problem. """
+    def run(self, data: Collection[MNP_Number]) -> MNP_Answer:
         model = grp.Model("ip")
 
         if self.settings.get('TimeLimit', None):
@@ -17,7 +16,7 @@ class GurobiAlgorithm(MNPAlgorithm):
 
         n = len(data)
         m = self.number_of_sets
-        _perfect = self.get_perfect_mnp(data)
+        _perfect = self.get_perfect_mnp_value(data)
 
         _vars = model.addVars(
             (
@@ -45,4 +44,4 @@ class GurobiAlgorithm(MNPAlgorithm):
             for j in range(m)
         ]
 
-        return model.objVal, sets
+        return sets
