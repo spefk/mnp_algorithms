@@ -9,6 +9,7 @@ gurobipy = "*"
 mypy = "*"
 pytest = "*"
 more-itertools = "*"
+graphviz = "*"
 
 [dev-packages]
 
