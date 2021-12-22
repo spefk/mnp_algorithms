@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from abc import ABCMeta, abstractmethod
 from typing import List, Optional
@@ -65,9 +67,17 @@ class PartialSolution:
     def get_perfect(data: Instance_T, m: int) -> float:
         return sum(data) / m
 
+    @staticmethod
+    def _squared_error(sums: np.ndarray, perfect: float):
+        return sum((sums - perfect) ** 2)
+
     @property
-    def mse(self) -> float:
-        return sum((self.sums - self.perfect) ** 2)
+    def squared_error(self) -> float:
+        return self._squared_error(self.sums, self.perfect)
+
+    @property
+    def abs_error(self) -> float:
+        return sum(np.abs(self.sums - self.perfect))
 
     @property
     def is_full(self) -> bool:
@@ -87,15 +97,49 @@ class PartialSolution:
             for j in range(self.m)
         ]
 
+    def __eq__(self, other: PartialSolution) -> bool:
+        if not isinstance(other, PartialSolution):
+            raise TypeError("Types are incompatible for ==")
+        return (
+            self.n == other.n
+            and self.m == other.m
+            and np.array_equal(self.partitioning, other.partitioning)
+        )
+
     def __hash__(self):
         return hash(self.partitioning.tobytes())
+
+    def hash_put(self, i: int, j: int):
+        s_idx = self.find_item(i)
+        self.put_item(i, j)
+        hs = hash(self)
+        self.put_item(i, s_idx)
+        return hs
+
+    def delta_put(self, i: int, j: int):
+        sum_copy = self.sums.copy()
+        s_idx = self.find_item(i)
+        if s_idx:
+            sum_copy[s_idx] -= self.cost[i]
+        sum_copy[j] += self.cost[i]
+        return self.squared_error - self._squared_error(sum_copy, self.perfect)
+
+    def delta_swap(self, i_1: int, i_2: int):
+        set_1 = self.find_item(i_1)
+        set_2 = self.find_item(i_2)
+        return (
+            abs(self.sums[set_1] - self.perfect)
+            + abs(self.sums[set_2] - self.perfect)
+            - abs(self.sums[set_1] - self.cost[i_1] + self.cost[i_2] - self.perfect)
+            - abs(self.sums[set_2] - self.cost[i_2] + self.cost[i_1] - self.perfect)
+        )
 
     @staticmethod
     def nested_list_to_str(sol: Solution_T):
         return "\n".join(
-            map(
-                lambda x: " ".join(map(str, x)),
-                sol
+            (
+                f"{i}: " + " ".join(map(str, x))
+                for i, x in enumerate(sol)
             )
         )
 
@@ -104,7 +148,9 @@ class PartialSolution:
                f"IS_FULL:{self.is_full}\n"\
                f"SETS:\n"\
                f"{self.nested_list_to_str(self.solution)}\n"\
-               f"MSE: {self.mse}\n"
+               f"Diffs: {self.sums - self.perfect}\n" \
+               f"Sum Abs Errors: {self.abs_error}\n" \
+               f"STD: {np.std(self.sums - self.perfect)}\n"
 
 
 class AbstractSolver(metaclass=ABCMeta):
@@ -112,3 +158,7 @@ class AbstractSolver(metaclass=ABCMeta):
     @abstractmethod
     def solve(self, data: Instance_T, m: int) -> PartialSolution:
         raise NotImplementedError
+
+
+class LocalSearch(AbstractSolver, metaclass=ABCMeta):
+    pass

@@ -5,22 +5,22 @@ from typing import Callable
 
 import numpy as np
 
-from core import AbstractSolver, AbstractMove, PartialSolution, Instance_T, Solution_T
+from core import AbstractMove, PartialSolution, Instance_T, Solution_T, LocalSearch
 
 logger = logging.getLogger(__name__)
 
 
-def temperature_div(t_cur, step=None, **_):
+def temperature_div(t_max=None, step=None, **_):
     step = step or 1
-    return t_cur / step
+    return t_max / step
 
 
-def temperature_div_log(t_cur, step=None, **_):
+def temperature_div_log(t_max=None, step=None, **_):
     step = step or 1
-    return t_cur / np.log2(step)
+    return t_max / np.log2(step)
 
 
-class SimulatedAnnealing(AbstractSolver):
+class SimulatedAnnealing(LocalSearch):
     """ Simulated Annealing algorithm """
 
     def __init__(
@@ -45,18 +45,18 @@ class SimulatedAnnealing(AbstractSolver):
         self.t_min = t_min
         self.max_iter = max_iter
 
-    def solve(self, data: Instance_T, m: int) -> PartialSolution:
+    def solve(self, _: Instance_T, __: int) -> PartialSolution:
         t_cur = self.t_max
         ps_cur = self.ps
-        of_cur = ps_cur.mse
+        of_cur = ps_cur.squared_error
         ps_best = copy.deepcopy(ps_cur)
-        of_best = ps_best.mse
+        of_best = ps_best.squared_error
         _iter = 1
         while _iter <= self.max_iter and t_cur > self.t_min:
             ps_new = copy.deepcopy(ps_cur)
             self.move.move(ps_new)
 
-            of_new = ps_new.mse
+            of_new = ps_new.squared_error
             logger.debug(f'NEW OF {of_new}')
 
             if of_cur > of_new or random.random() < np.exp(-(of_new - of_cur) / t_cur):

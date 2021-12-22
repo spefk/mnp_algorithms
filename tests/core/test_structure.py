@@ -30,9 +30,9 @@ def test_assignment():
 
     data_2 = [2, 2]
     ps3 = PartialSolution(data_2, 2)
-    assert ps3.mse == np.sqrt(8)
+    assert ps3.squared_error == np.sqrt(8)
     ps3.put_item(0, 0)
-    assert ps3.mse == 2
+    assert ps3.squared_error == 2
 
 
 def test_deepcopy():
