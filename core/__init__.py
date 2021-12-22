@@ -1,3 +1,3 @@
-from .algorithm import *
 from .data_source import *
-from .solver import *
+from .moves import *
+from .structures import *

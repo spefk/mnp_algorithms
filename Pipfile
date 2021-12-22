@@ -9,7 +9,10 @@ gurobipy = "*"
 mypy = "*"
 pytest = "*"
 more-itertools = "*"
-graphviz = "*"
+pandas = "*"
+matplotlib = "*"
+jupyter = "*"
+notebook = "*"
 
 [dev-packages]
 

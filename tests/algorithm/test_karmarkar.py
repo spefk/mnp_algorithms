@@ -1,14 +1,12 @@
-import pytest
-
-from mnp.karmarkar_karp import PartialSet
+from karmarkar_karp import _PartialSet
 
 
 def test_partial():
-    p1 = PartialSet(m=3, first_element=10)
-    p2 = PartialSet(m=3, first_element=20)
-    p3 = PartialSet(m=3, first_element=5)
-    p4 = PartialSet(m=3, first_element=15)
-    p5 = PartialSet(m=3, first_element=7)
+    p1 = _PartialSet(m=3, first_element=10)
+    p2 = _PartialSet(m=3, first_element=20)
+    p3 = _PartialSet(m=3, first_element=5)
+    p4 = _PartialSet(m=3, first_element=15)
+    p5 = _PartialSet(m=3, first_element=7)
 
     p1 | p2
     assert p1.sets == [[], [10], [20]]

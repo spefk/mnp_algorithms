@@ -3,7 +3,11 @@ from typing import List
 
 def Dynamic2MNP(data: List[int]) -> bool:
     """
-    time complexity:   O(S * N)
+    Dynamic programming algorithm to determine if
+    there is a perfect partitioning of numbers in
+    two sets.
+
+    time complexity: O(S * N)
     memory complexity: O(S)
     where S = sum(data), N = len(data)
     """
@@ -27,5 +31,5 @@ if __name__ == '__main__':
     print(Dynamic2MNP([1, 3, 5, 1]))
     print(Dynamic2MNP([1, 2, 3, 4, 5, 6, 7]))
     print(Dynamic2MNP([1, 2, 3, 4, 5, 6, 7, 8]))
-    print(Dynamic2MNP(range(0, 201)))
-    print(Dynamic2MNP(range(0, 202)))
+    print(Dynamic2MNP(list(range(0, 201))))
+    print(Dynamic2MNP(list(range(0, 202))))

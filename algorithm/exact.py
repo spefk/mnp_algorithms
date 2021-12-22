@@ -1,22 +1,25 @@
+from typing import Optional
+
 import gurobipy as grp
 
-from typing import Collection
 from gurobipy import GRB
 
-from core import MNPAlgorithm, MNP_Number, MNP_Answer
+from core import Instance_T, AbstractSolver, PartialSolution
 
 
-class GurobiAlgorithm(MNPAlgorithm):
+class GurobiSolver(AbstractSolver):
     """ Uses Gurobi optimizer to solve MNP problem. """
-    def run(self, data: Collection[MNP_Number]) -> MNP_Answer:
+    def __init__(self, timelimit: Optional[int] = 300):
+        self.timelimit = timelimit
+
+    def solve(self, data: Instance_T, m: int) -> PartialSolution:
         model = grp.Model("ip")
 
-        if self.settings.get('TimeLimit', None):
-            model.setParam('TimeLimit', self.settings.get('TimeLimit', None))
+        if self.timelimit:
+            model.setParam('TimeLimit', self.timelimit)
 
         n = len(data)
-        m = self.number_of_sets
-        _perfect = self.get_perfect_mnp_value(data)
+        _perfect = PartialSolution.get_perfect(data, m)
 
         _vars = model.addVars(
             (
@@ -44,4 +47,4 @@ class GurobiAlgorithm(MNPAlgorithm):
             for j in range(m)
         ]
 
-        return sets
+        return PartialSolution.from_solution(sets)

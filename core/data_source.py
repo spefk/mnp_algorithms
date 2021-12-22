@@ -34,7 +34,7 @@ class DataSource(Generic[_R, _V], metaclass=ABCMeta):
         self._gatherer = gatherer
         self._mapper = mapper
 
-    def get_data(self) -> Collection[_V]:
+    def get_data(self):
         return self._gatherer(self._map_data_iter())
 
     @abstractmethod
