@@ -22,8 +22,9 @@ class PartialSolution:
         self.n = len(data)
         self.m = m
         self.perfect = self.get_perfect(data, m)
-        self.cost = np.array(data)
-        self.partitioning = np.zeros((m, self.n), dtype=bool)
+        self.cost = data  # Link on data
+        assert self.m < (1 << 7), "Number of sets is too high"
+        self.partitioning = np.full(self.n, m, dtype=np.uint)
         self.sums = np.zeros(self.m, dtype=int)
 
     def cost_item(self, i: int) -> int:
@@ -40,28 +41,28 @@ class PartialSolution:
         return obj
 
     def find_item(self, i: int) -> Optional[int]:
-        for j in range(self.m):
-            if self.partitioning[j][i]:
-                return j
-        return None
+        return self.partitioning[i]
 
     def reset_item(self, i: int) -> None:
         j = self.find_item(i)
-        if j is not None:
-            self.partitioning[j][i] = False
+        if j != self.m:
+            self.partitioning[i] = self.m
             self.sums[j] -= self.cost[i]
 
     def put_item(self, i: int, j: int) -> None:
         self.reset_item(i)
-        self.partitioning[j][i] = True
+        self.partitioning[i] = j
         self.sums[j] += self.cost[i]
 
     def recalculate_sums(self) -> None:
-        for j in range(self.m):
-            self.sums[j] = np.dot(self.partitioning[j], self.cost)
+        self.sums = np.zeros(self.m, dtype=int)
+        for i, x in enumerate(self.cost):
+            j = self.find_item(i)
+            if j is not None:
+                self.sums[j] += x
 
     def get_index_list(self, j: int) -> np.ndarray:
-        return np.where(self.partitioning[j])[0]
+        return np.where(self.partitioning == j)[0]
 
     @staticmethod
     def get_perfect(data: Instance_T, m: int) -> float:
@@ -81,7 +82,7 @@ class PartialSolution:
 
     @property
     def is_full(self) -> bool:
-        return np.sum(self.partitioning) == self.n
+        return all(x is not None for x in self.partitioning)
 
     @property
     def solution(self) -> List[List[Elem_T]]:
@@ -92,7 +93,7 @@ class PartialSolution:
             [
                 self.cost[i]
                 for i in range(self.n)
-                if self.partitioning[j][i]
+                if self.partitioning[i] == j
             ]
             for j in range(self.m)
         ]
@@ -115,6 +116,10 @@ class PartialSolution:
         hs = hash(self)
         self.put_item(i, s_idx)
         return hs
+
+    @property
+    def sums_hash(self):
+        return hash(tuple(self.sums))
 
     def delta_put(self, i: int, j: int):
         sum_copy = self.sums.copy()

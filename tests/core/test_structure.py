@@ -11,12 +11,12 @@ def test_assignment():
     assert ps.sums.size == 3
     assert np.array_equal(ps.sums, np.array([0, 0, 0], dtype=int))
     for x in range(len(data)):
-        assert ps.find_item(x) is None
+        assert ps.find_item(x) == 3
     ps.put_item(3, 1)
     assert ps.find_item(3) == 1
     assert ps.sums[1] == 4
     ps.reset_item(3)
-    assert ps.find_item(3) is None
+    assert ps.find_item(3) == 3
     assert ps.sums[1] == 0
     ps.put_item(3, 1)
     ps.put_item(3, 2)
@@ -30,9 +30,9 @@ def test_assignment():
 
     data_2 = [2, 2]
     ps3 = PartialSolution(data_2, 2)
-    assert ps3.squared_error == np.sqrt(8)
+    assert ps3.squared_error == 8
     ps3.put_item(0, 0)
-    assert ps3.squared_error == 2
+    assert ps3.squared_error == 4
 
 
 def test_deepcopy():

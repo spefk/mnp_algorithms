@@ -23,6 +23,6 @@ def test_greedy_trivial(instance, expected):
         gatherer=list,
     )
 
-    solution = GreedySolver().solve(ext_s_one.get_data(), 2)
+    solution = GreedySolver().solve(ext_s_one.get_data(), 2).solution
     assert solution == expected
 
