@@ -5,7 +5,7 @@ from typing import Callable
 
 import numpy as np
 
-from core import AbstractMove, PartialSolution, Instance_T, Solution_T, LocalSearch
+from core import AbstractMover, PartialSolution, Instance_T, LocalSearch
 
 logger = logging.getLogger(__name__)
 
@@ -22,11 +22,10 @@ def temperature_div_log(t_max=None, step=None, **_):
 
 class SimulatedAnnealing(LocalSearch):
     """ Simulated Annealing algorithm """
-
     def __init__(
             self,
             ps: PartialSolution,
-            move: AbstractMove,
+            move: AbstractMover,
             temperature_func: Callable,
             t_max=10**3,
             t_min=0,

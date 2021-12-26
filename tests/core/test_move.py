@@ -1,5 +1,5 @@
 import numpy as np
-from core import PartialSolution, MaxToMin, GreedyTranspOne
+from core import PartialSolution, max_to_min, greedy_transp_one
 
 
 def test_maxtomin():
@@ -9,7 +9,7 @@ def test_maxtomin():
     ps.put_item(2, 1)
     assert np.array_equal(ps.get_index_list(0), [0, 1])
     assert np.array_equal(ps.get_index_list(1), [2])
-    MaxToMin.move(ps)
+    max_to_min(ps)
     assert np.array_equal(ps.get_index_list(0), [0, 1, 2])
     assert np.array_equal(ps.get_index_list(1), [])
 
@@ -19,6 +19,6 @@ def test_greedy():
     ps.put_item(0, 1)
     assert np.array_equal(ps.get_index_list(0), [])
     assert np.array_equal(ps.get_index_list(1), [0])
-    GreedyTranspOne.move(ps)
+    greedy_transp_one(ps)
     assert np.array_equal(ps.get_index_list(0), [0])
     assert np.array_equal(ps.get_index_list(1), [])

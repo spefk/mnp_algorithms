@@ -35,6 +35,7 @@ class ACO(AbstractSolver):
         self._reset_pheromones()
         best_ps = RandomSolver().solve(data, m)
         for _ in range(self.max_iter):
+
             # run N Ants, each returns some solution
             ants_result = [self._one_iteration(data, m) for _ in range(self.ants_n)]
             # update all pheromones (evaporation)
@@ -49,8 +50,10 @@ class ACO(AbstractSolver):
             # update pheromones according to solutions
             for ps in ants_result:
                 _of = ps.abs_error
+                _sums = np.zeros(ps.m)
                 for i, x in enumerate(data):
-                    self.pheromones[(i, ps.find_item(i))] += self.growth_r / _of
+                    self.pheromones[(ps.get_sum_hash(_sums), i, ps.find_item(i))] += self.growth_r / _of
+                    _sums[ps.find_item(i)] += ps.cost[i]
                 if ps.abs_error < best_ps.abs_error:
                     best_ps = ps
 
@@ -60,7 +63,7 @@ class ACO(AbstractSolver):
         ps = PartialSolution(data, m=m)
         for i, x in enumerate(data):
             # choose where to put i by pheromones
-            phero = np.array([self.pheromones[(i, j)] for j in range(m)])
+            phero = np.array([self.pheromones[(ps.sums_hash, i, j)] for j in range(m)])
             j = np.random.choice(
                 list(range(m)),
                 1,

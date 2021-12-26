@@ -117,9 +117,23 @@ class PartialSolution:
         self.put_item(i, s_idx)
         return hs
 
+    def hash_swap(self, i: int, j: int):
+        i_idx = self.find_item(i)
+        j_idx = self.find_item(j)
+        self.put_item(i, j_idx)
+        self.put_item(j, i_idx)
+        hs = hash(self)
+        self.put_item(i, i_idx)
+        self.put_item(j, j_idx)
+        return hs
+
+    @staticmethod
+    def get_sum_hash(sums: np.ndarray):
+        return hash(tuple(sums))
+
     @property
     def sums_hash(self):
-        return hash(tuple(self.sums))
+        return self.get_sum_hash(self.sums)
 
     def delta_put(self, i: int, j: int):
         sum_copy = self.sums.copy()
