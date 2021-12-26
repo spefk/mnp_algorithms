@@ -31,7 +31,10 @@ class TabuSearch(LocalSearch):
         cur_sol = copy.deepcopy(self.ps)
         best_sol = self.ps
         seen = deque([hash(cur_sol)])
-        for _ in range(self.max_iter):
+        for ii in range(self.max_iter):
+            if (ii + 1) % 100 == 0:
+                logger.info(f"Starting {ii + 1} TS iteration.")
+
             self.move.move(cur_sol, seen=seen)
 
             if cur_sol.squared_error < best_sol.squared_error:

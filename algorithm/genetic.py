@@ -1,4 +1,5 @@
 import copy
+import logging
 import random
 from abc import ABCMeta, abstractmethod
 from typing import List
@@ -9,6 +10,9 @@ from core import (
     AbstractMover, PartialSolution, AbstractSolver, Instance_T,
 )
 from .random_solution import RandomSolver
+
+
+logger = logging.getLogger(__name__)
 
 
 class AbstractCrossover(metaclass=ABCMeta):
@@ -66,7 +70,10 @@ class GeneticAlgorithm(AbstractSolver):
             RandomSolver().solve(data, m)
             for _ in range(self.population_size)
         ]
-        for _ in range(iter_n):
+        for ii in range(iter_n):
+            if (ii + 1) % 10 == 0:
+                logger.info(f"Starting {ii + 1} GA iteration.")
+
             # Selection (K best, T worst)
             K, T = int(self.selection_n * 0.9), int(self.selection_n * 0.1)
             population.sort(key=_get_error)
@@ -103,7 +110,10 @@ class ParallelGenetic(GeneticAlgorithm):
 
     def solve(self, data: Instance_T, m: int) -> PartialSolution:
         _populations = [self._genetic_run(data, m, 0) for _ in range(self.experiments_n)]
-        for _ in range(self.max_iter):
+        for ii in range(self.max_iter):
+            if (ii + 1) % 5 == 0:
+                logger.info(f"Starting {ii + 1} Parallel GA iteration.")
+
             # mix
             all_pop = list(flatten(_populations))
             sz = len(_populations[0])

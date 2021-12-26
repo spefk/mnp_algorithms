@@ -7,6 +7,7 @@ import numpy as np
 
 from core import AbstractMover, PartialSolution, Instance_T, LocalSearch
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -52,6 +53,9 @@ class SimulatedAnnealing(LocalSearch):
         of_best = ps_best.squared_error
         _iter = 1
         while _iter <= self.max_iter and t_cur > self.t_min:
+            if (_iter + 1) % 100 == 0:
+                logger.info(f"Starting {_iter + 1} SA iteration.")
+
             ps_new = copy.deepcopy(ps_cur)
             self.move.move(ps_new)
 

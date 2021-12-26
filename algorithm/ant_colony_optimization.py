@@ -1,9 +1,13 @@
+import logging
 from collections import defaultdict
 
 import numpy as np
 
 from .random_solution import RandomSolver
 from core import AbstractSolver, Instance_T, PartialSolution
+
+
+logger = logging.getLogger(__name__)
 
 
 class ACO(AbstractSolver):
@@ -34,7 +38,9 @@ class ACO(AbstractSolver):
     def solve(self, data: Instance_T, m: int) -> PartialSolution:
         self._reset_pheromones()
         best_ps = RandomSolver().solve(data, m)
-        for _ in range(self.max_iter):
+        for ii in range(self.max_iter):
+            if (ii + 1) % 10 == 0:
+                logger.info(f"Starting {ii + 1} ACO iteration.")
 
             # run N Ants, each returns some solution
             ants_result = [self._one_iteration(data, m) for _ in range(self.ants_n)]
