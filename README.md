@@ -14,4 +14,4 @@
 - Dynamic (for perfect 2-set);
 - Genetic Algorithm (Consequent, Parallel).
 
-Examples could be found in `mnp.ipynb`.
+Examples could be found in `mnp_large.ipynb`.
