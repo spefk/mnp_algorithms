@@ -1,4 +1,5 @@
 # MNP Algorithms
+made for SPbSUE course home assignment
 
 ---
 
